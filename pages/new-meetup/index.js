@@ -1,6 +1,8 @@
 "use client";
 
 import NewMeetupForm from "@/components/meetups/NewMeetupForm";
+import Head from "next/head";
+import { Fragment } from "react";
 
 const NewMeetUp = () => {
   const AddingNewMeetUpHandler = async (enteredData) => {
@@ -16,10 +18,17 @@ const NewMeetUp = () => {
   };
 
   return (
-    <>
-      <h1>NewMeetUp</h1>
+    <Fragment>
+      <h1>New MeetUp</h1>
+      <Head>
+        <title>Add a new Meetup</title>
+        <meta
+          name="description"
+          content="Browse a list of highly active meetups"
+        />
+      </Head>
       <NewMeetupForm onAddMeetup={AddingNewMeetUpHandler} />
-    </>
+    </Fragment>
   );
 };
 export default NewMeetUp;

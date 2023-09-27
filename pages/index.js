@@ -3,6 +3,8 @@
 import MeetupList from "@/components/meetups/MeetupList";
 import { BASE_URL } from "@/constants";
 import { MongoClient } from "mongodb";
+import Head from "next/head";
+import { Fragment } from "react";
 
 // const Data = [
 //   {
@@ -31,30 +33,37 @@ import { MongoClient } from "mongodb";
 //   },
 // ];
 const HomePage = (props) => {
-  
   return (
+    <Fragment>
+      <Head>
+        <title>Meetups HomePage</title>
+        <meta
+          name="description"
+          content="Browse a list of highly active meetups"
+        />
+      </Head>
       <MeetupList meetups={props.meetups} />
+    </Fragment>
   );
 };
 
-export async function getStaticProps(){
-
+export async function getStaticProps() {
   const client = await MongoClient.connect(BASE_URL);
   const db = client.db();
-  const meetupCollection = db.collection('meetups');
+  const meetupCollection = db.collection("meetups");
   const meetups = await meetupCollection.find().toArray();
   client.close();
-  
+
   return {
-    props:{
-      meetups: meetups.map((meetup)=>({
+    props: {
+      meetups: meetups.map((meetup) => ({
         title: meetup.title,
         address: meetup.address,
         image: meetup.image,
-        id: meetup._id.toString()
-      }))
+        id: meetup._id.toString(),
+      })),
     },
-    revalidate: 10
-  }
+    revalidate: 10,
+  };
 }
 export default HomePage;

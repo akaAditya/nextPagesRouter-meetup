@@ -3,11 +3,16 @@
 import MeetUpDetails from "@/components/meetups/MeetUpDetails";
 import { BASE_URL } from "@/constants";
 import { MongoClient, ObjectId } from "mongodb";
+import Head from "next/head";
 import { Fragment } from "react";
 
 const ShowDetailsIdHandler = (props) => {
   return (
     <Fragment>
+    <Head>
+      <title>{props.meetupDetails.title}</title>
+      <meta name={props.meetupDetails.title} content={props.meetupDetails.description}/>
+    </Head>
       <MeetUpDetails
         image={props.meetupDetails.image}
         title={props.meetupDetails.title}
