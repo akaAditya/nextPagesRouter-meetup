@@ -1,55 +1,57 @@
 "use client";
 
-import MeetupItem from "@/components/meetups/MeetupItem";
+import MeetUpDetails from "@/components/meetups/MeetUpDetails";
+import { BASE_URL } from "@/constants";
+import { MongoClient, ObjectId } from "mongodb";
 import { Fragment } from "react";
 
 const ShowDetailsIdHandler = (props) => {
   return (
     <Fragment>
-      <MeetupItem
-        image="https://images.pexels.com/photos/773471/pexels-photo-773471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-        title='A first meet-up'
-        address="ABCD, 123 New Wales"
+      <MeetUpDetails
+        image={props.meetupDetails.image}
+        title={props.meetupDetails.title}
+        address={props.meetupDetails.address}
+        description={props.meetupDetails.description}
       />
     </Fragment>
   );
 };
 
 export async function getStaticPaths() {
+  const client = await MongoClient.connect(BASE_URL);
+  const db = client.db();
+  const meetupCollection = db.collection("meetups");
+  const meetups = await meetupCollection.find({}, { _id: 1 }).toArray();
+  client.close();
+
   return {
     fallback: false,
-    paths: [
-      {
-        params: {
-          meetupId: "m1",
-        },
-      },
-      {
-        params: {
-          meetupId: "m2",
-        },
-      },
-      {
-        params: {
-          meetupId: "m3",
-        },
-      },
-    ],
+    paths: meetups.map((meetup) => ({
+      params: { meetupId: meetup._id.toString() },
+    })),
   };
 }
 
 export async function getStaticProps(context) {
   const meetupId = context.params.meetupId;
-  console.log(meetupId);
+
+  const client = await MongoClient.connect(BASE_URL);
+  const db = client.db();
+  const meetupCollection = db.collection("meetups");
+  const meetups = await meetupCollection.findOne({
+    _id: new ObjectId(meetupId),
+  });
+  client.close();
 
   return {
     props: {
       meetupDetails: {
-        id: meetupId,
-        image:
-          "https://images.pexels.com/photos/773471/pexels-photo-773471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-        title: "A first meet-up",
-        address: "ABCD, 123 New Wales",
+        id: meetups._id.toString(),
+        title: meetups.title,
+        description: meetups.description,
+        address: meetups.address,
+        image: meetups.image,
       },
     },
     revalidate: 10,

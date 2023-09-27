@@ -1,14 +1,13 @@
+import { BASE_URL } from "@/constants";
 import { MongoClient } from "mongodb";
 
 async function handler(req, res) {
   if (req.method === "POST") {
     const data = req.body;
 
-    const client = await MongoClient.connect(
-      "mongodb+srv://mymailaditya:AfxKwayGSPGxF16h@clusters.n5i7lds.mongodb.net/meetups?retryWrites=true&w=majority"
-    );
+    const client = await MongoClient.connect(BASE_URL);
 
-    const db =  client.db();
+    const db = client.db();
 
     const meetupCollection = db.collection("meetups");
 
